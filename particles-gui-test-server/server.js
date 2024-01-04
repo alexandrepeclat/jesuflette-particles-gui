@@ -1,6 +1,6 @@
 const WebSocketServer = require('ws');
 const PORT = 3000;
-const wss = new WebSocketServer.Server({ port: PORT })
+const wss = new WebSocketServer.Server({ port: PORT, host: '0.0.0.0' })
 const states = ['HIDDEN', 'LOCKED', 'DISCOVERED', 'RESOLVED'];
 
 const statesSequences = [
