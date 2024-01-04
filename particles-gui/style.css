@@ -9,7 +9,6 @@ body {
     --symbol-v-margin: 50px;
     --symbol-h-margin: 50px;
     --symbol-hc-margin: 100px;
-    --hidden-width: 568px;
     --hidden-height: 100px;
     --title-height: 60px;
     color: white;
@@ -45,7 +44,7 @@ body {
     position: absolute;
     left: var(--main-margin);
     top: calc(var(--title-height) + var(--main-margin));
-    right: var(--symbol-width);
+    right: var(--discovered-width);
     height: var(--hidden-height);
 }
 
