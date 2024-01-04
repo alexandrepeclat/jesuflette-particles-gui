@@ -1,0 +1,170 @@
+body {
+    --main-width: 1280px;
+    --main-height: 720px;
+    --main-margin: 10px;
+    --discovered-width:700px;
+    --discovered-height:400px;
+    --symbol-width: 500px;
+    --symbol-height: 500px;
+    --symbol-v-margin: 50px;
+    --symbol-h-margin: 50px;
+    --symbol-hc-margin: 100px;
+    --hidden-width: 600px;
+    --hidden-height: 100px;
+    --title-height: 60px;
+    color: white;
+    background: black;
+    width: var(--main-width);
+    height: var(--main-height);
+    margin: 0px;
+    overflow: hidden;
+}
+
+#grid {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: var(--main-width);
+    height: var(--main-height);
+}
+
+/*
+.area {
+    border: 3px solid red;
+}*/
+
+#area-title {
+    position: absolute;
+    right: var(--main-margin);
+    left: var(--main-margin);
+    top: var(--main-margin);
+    height: var(--title-height);
+}
+
+#area-hidden {
+    position: absolute;
+    left: var(--main-margin);
+    top: calc(var(--title-height) + var(--main-margin));
+    right: var(--symbol-width);
+    height: var(--hidden-height);
+}
+
+#area-logs {
+    border: 1px solid maroon;
+    position: absolute;
+    top: calc(var(--title-height) + var(--hidden-height) + var(--main-margin));
+    bottom: var(--main-margin);
+    left: var(--main-margin);
+    right: var(--discovered-width);
+
+    vertical-align: bottom;
+    overflow-y: hidden;
+}
+
+#area-locked-discovered {
+    position: absolute;
+    right: var(--main-margin);
+    top: calc(var(--title-height) + var(--main-margin));
+    width: var(--discovered-width);
+    height: var(--discovered-height);
+}
+
+#area-resolved {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: calc(var(--symbol-width) + var(--symbol-hc-margin) + var(--symbol-width));
+    height: calc(var(--symbol-height) + var(--symbol-v-margin) + var(--symbol-height));
+    display: grid;
+    column-gap: var(--symbol-hc-margin);
+    row-gap: var(--symbol-v-margin);
+    padding-top: var(--symbol-v-margin);
+    padding-bottom: var(--symbol-v-margin);
+    padding-left: var(--symbol-h-margin);
+    padding-right: var(--symbol-h-margin);
+    grid-template-columns: var(--symbol-width) var(--symbol-width);
+    grid-template-rows: var(--symbol-height) var(--symbol-height);
+    background: white;
+    filter: grayscale(100%);
+    box-shadow: 0px 0px 40px 40px white;
+    /*animation: animation-glow 1.5s ease-in-out infinite alternate;*/
+
+}
+
+#area-resolved > img {
+    width: var(--symbol-width);
+    height: var(--symbol-height);
+}
+
+#area-resolved > img {
+    transform: scale(.8);
+}
+
+
+
+#display {
+    position: absolute;
+    z-index: 200;
+    border: 1px solid white;
+    margin: 0px;
+}
+
+
+#title {
+    text-align: center;
+    font: bold 48px consolas;
+    white-space: pre-wrap;
+}
+
+#logs {
+    text-align: left;
+    font: bold 18px consolas;
+    white-space: pre-wrap;
+    position: absolute;
+    bottom: 0px;
+}
+
+
+.burn-effect {
+    animation-name: animation-burn;
+    animation-duration: 2s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes animation-glow {
+    from {
+      box-shadow: 0 0 10px 10px white;
+    }
+    to {
+      box-shadow: 0 0 20px 20px white;
+    }
+  }
+
+@keyframes animation-burn {
+    0% {
+        filter: opacity(0%) saturate(200) brightness(0%);
+    }
+
+    50% {
+        filter: opacity(0%) saturate(200) brightness(0%);
+    }
+
+    100% {
+        filter: opacity(100%) saturate(0) brightness(100%);
+    }
+}
+
+
+.neon-effect {
+    animation: animation-neon 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes animation-neon {
+    from {
+        text-shadow: 0 0 5px #fff, 0 0 40px #880000;
+    }
+    to {
+        text-shadow: 0 0 5px #fff, 0 0 20px #880000;
+    }
+}

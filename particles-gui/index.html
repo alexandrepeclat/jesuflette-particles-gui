@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="grid">
+    <div id="area-title" class="area  ">
+      <div id="title" class="neon-effect"></div>
+    </div>
+    <div id="area-logs" class="area">
+      <div id="logsWrapper">
+        <div id="logs"></div>
+      </div>
+    </div>
+
+    <div id="area-hidden" class="area"></div>
+    <div id="area-locked-discovered" class="area"></div>
+    <div id="area-resolved" class="area">
+      <img id="symbol-0" src="assets/symbol-fromage-b2.png" style="display:none;" />
+      <img id="symbol-1" src="assets/symbol-oignon-b2.png" style="display:none;" />
+      <img id="symbol-2" src="assets/symbol-saucisse-b2.png" style="display:none;" />
+      <img id="symbol-3" src="assets/symbol-gnocchi-b1.png" style="display:none;" />
+    </div>
+  </div>
+  <canvas id='display'></canvas>
+
+  <canvas id='debug' style="border:1px solid green;display:none;"></canvas>
+  <script src="particle.js"></script>
+  <script src="userInput.js"></script>
+  <script src="particleGroup.js"></script>
+  <script src="symbol.js"></script>
+  <script src="websocket.js"></script>
+  <script src="perspectiveTransform.js"></script>
+  <script src="utils.js"></script>
+
+  <script type="text/javascript">
+    //python -m http.server
+    //node ./server-test/server.js
+    //http://localhost:8000/?serverUrl=ws://localhost:3000
+
+
+    const STATE_INIT = 'INIT';
+    const STATE_HIDDEN = 'HIDDEN';
+    const STATE_LOCKED = 'LOCKED';
+    const STATE_DISCOVERED = 'DISCOVERED';
+    const STATE_RESOLVED = 'RESOLVED';
+
+    var DAMPING = 0.999; //Plus bas = plus lent
+    var IMAGE_DENSITY = 4;
+    var ORBIT_RADIUS_MIN = 50;
+    var ORBIT_RADIUS_MAX = 200;
+
+
+
+    var framesCount = 0;
+    var canvas = document.getElementById('display');
+    var ctx = canvas.getContext('2d');
+    var eltLogs = document.getElementById("logs");
+    var eltTitle = document.getElementById("title");
+    var width = canvas.width = 1280;
+    var height = canvas.height = 720;
+
+    var mouse = { x: width * 0.5, y: height * 0.5 };
+    var drawnPositions = new Set();
+    var symbols = [];
+    var globalLogs = new Array();
+    var globalTitle = "";
+    var states = null;
+
+    var areaHidden = document.getElementById('area-hidden');
+    var areaLockedDiscovered = document.getElementById('area-locked-discovered');
+    var areaResolved = document.getElementById('area-resolved');
+    var transform = new PerspectiveTransform(areaResolved, areaResolved.offsetWidth, areaResolved.offsetHeight, true);
+
+    function updateTitle(text) {
+      globalTitle = text;
+      eltTitle.innerHTML = globalTitle;
+    }
+
+    function updateLogs(log, save = true) {
+      console.debug(log);
+
+      if ((log.startsWith("Remaining time") && globalLogs[globalLogs.length - 1].startsWith("Remaining time"))
+        || (log.startsWith("Are you still there") && globalLogs[globalLogs.length - 1].startsWith("Are you still there"))) {
+        globalLogs[globalLogs.length - 1] = log;
+      } else {
+        globalLogs.push(log);
+      }
+
+      let tailLogs = globalLogs.slice(-40);
+      for (let i = 0; i < tailLogs.length; i++) {
+        tailLogs[i] = "> " + tailLogs[i];
+      }
+      eltLogs.innerHTML = tailLogs.join("<br>");
+
+      if (save) {
+        localStorage.setItem('logs', JSON.stringify(globalLogs.slice(-40)));
+      }
+
+    }
+
+    function clearLogs() {
+      globalLogs = globalLogs.splice(0, globalLogs);
+      eltLogs.innerHTML = "";
+      localStorage.removeItem('logs');
+    }
+
+    function restoreLogs() {
+      let savedVal = localStorage.getItem('logs');
+      if (savedVal) {
+        let savedLogs = JSON.parse(savedVal);
+        for (let i = 0; i < savedLogs.length; i++) {
+          updateLogs(savedLogs[i], false);
+        }
+      } else {
+        //updateLogs("Forge initialized !", true);
+      }
+    }
+
+    restoreLogs();
+    updateTitle("Welcome stagiaire");
+
+    function updateBookTransform(property) {
+      console.debug("Book " + property + " at " + "[" + mouse.x + "," + mouse.y + "]");
+      if (transform.checkError() == 0) {
+        transform.update();
+        localStorage.setItem('transform', JSON.stringify([transform.topLeft, transform.topRight, transform.bottomLeft, transform.bottomRight]));
+      } else {
+        console.debug("error transform " + transform.checkError());
+      }
+    }
+
+    function restoreBookTransform() {
+      let savedVal = localStorage.getItem('transform');
+      let savedTransform;
+      if (savedVal) {
+        savedTransform = JSON.parse(savedVal);
+      } else {
+        savedTransform = [{"x":926,"y":584},{"x":1145,"y":587},{"x":891,"y":693},{"x":1193,"y":692}];
+      }
+      transform.topLeft = savedTransform[0];
+      transform.topRight = savedTransform[1];
+      transform.bottomLeft = savedTransform[2];
+      transform.bottomRight = savedTransform[3];
+      updateBookTransform("all");
+    }
+    restoreBookTransform();
+
+    //CREATION
+    symbols.push(new Symbol(0, document.getElementById('symbol-0')));
+    symbols.push(new Symbol(1, document.getElementById('symbol-1')));
+    symbols.push(new Symbol(2, document.getElementById('symbol-2')));
+    symbols.push(new Symbol(3, document.getElementById('symbol-3')));
+
+    //LOOP 
+    requestAnimationFrame(frame);
+    function frame() {
+      requestAnimationFrame(frame);
+
+      //clear
+      ctx.clearRect(0, 0, width, height);
+
+      //Draw symbols
+      for (var i = 0; i < symbols.length; i++) {
+        symbols[i].update();
+        symbols[i].draw();
+      }
+
+      framesCount++;
+      drawnPositions = new Set();
+    }
+
+
+
+    
+    // const texts = [
+    //   // "Hola"
+    // ];
+    // const images = [
+    //   // 'assets/symbol-fromage-1.png',
+    //   // 'assets/symbol-fromage-2.png',
+    //   // 'assets/symbol-fromage-3.png',
+    //   // 'assets/symbol-fromage-b1.png',
+    //   'assets/symbol-fromage-b2.png',
+    //   // 'assets/symbol-oignon-1.png',
+    //   'assets/symbol-oignon-b2.png',
+    //   // 'assets/symbol-oignon-b3.png',
+    //   // 'assets/symbol-oignon-b1.png',
+    //   // 'assets/symbol-saucisse-1.png',
+    //   // 'assets/symbol-saucisse-2.png',
+    //   // 'assets/symbol-saucisse-b1.png',
+    //   'assets/symbol-saucisse-b2.png',
+    //   // 'assets/feu-b1.png',
+    //   // 'assets/feu-b2.png',
+    //   'assets/symbol-gnocchi-b1.png',
+    // ];
+
+  </script>
+</body>
+
+</html>
