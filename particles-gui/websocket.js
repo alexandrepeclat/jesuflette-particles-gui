@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (serverUrl === undefined || serverUrl == null) {
         updateLogs("Url websocket invalide: " + serverUrl + " usage: http://xxx.yyy:8888?serverUrl=ws://server:port");
-        updateLogs();
         return;
     }
 

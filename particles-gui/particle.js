@@ -61,6 +61,14 @@ class Particle {
 
     attract(index) {
 
+        // if (!this.visible) {
+        //     this.x = this.targetX;
+        //     this.y = this.targetY;
+        //     this.oldX = this.x;
+        //     this.oldY = this.y;
+        //     return;
+        // }
+
         let rdmX = 0;
         let rdmY = 0;
 
@@ -91,6 +99,11 @@ class Particle {
     };
 
     integrate(index) {
+
+        // if (!this.visible) {
+        //     return;
+        // }
+
         let previousDistance2 = Math.pow(this.oldX - this.targetX, 2) + Math.pow(this.oldY - this.targetY, 2);
         let currentDistance2 = Math.pow(this.x - this.targetX, 2) + Math.pow(this.y - this.targetY, 2);
         let speed = currentDistance2 - previousDistance2; //- approche + éloigne

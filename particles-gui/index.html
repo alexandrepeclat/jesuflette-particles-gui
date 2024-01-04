@@ -84,8 +84,9 @@
     function updateLogs(log, save = true) {
       console.debug(log);
 
-      if ((log.startsWith("Remaining time") && globalLogs[globalLogs.length - 1].startsWith("Remaining time"))
-        || (log.startsWith("Are you still there") && globalLogs[globalLogs.length - 1].startsWith("Are you still there"))) {
+      if (globalLogs.length > 2 && 
+      ((log.startsWith("Remaining time") && globalLogs[globalLogs.length - 1].startsWith("Remaining time"))
+        || (log.startsWith("Are you still there") && globalLogs[globalLogs.length - 1].startsWith("Are you still there")))) {
         globalLogs[globalLogs.length - 1] = log;
       } else {
         globalLogs.push(log);

@@ -28,7 +28,7 @@ class ParticleGroup {
     }
 
     draw() {
-        const tolerance = 1; //Color grouping tolerance
+        const tolerance = 20; //Color grouping tolerance
         const particlesByColor = new Map();
 
         // Group particles by color (for perfs)
