@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setInterval(() => {
         if (socket && socket.readyState === WebSocket.CLOSED)
             connect();
-    }, 4000);
+    }, 8000);
 
     function connect() {
         updateLogs('Connexion au serveur des ténèbres : ' + serverUrl);
@@ -27,10 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = JSON.parse(event.data); // Convertir la chaîne JSON en objet JavaScript
             if ('log' in data) {
                 // updateLogs(data.log);
-                updateTitle(data.log);
+                updateLogs(data.log);
             }
             if ('title' in data) {
-                updateTitle(data.log);
+                updateTitle(data.title);
             }
             if ('steps' in data) {
                 for (let i = 0; i < data.steps.length; i++) {
