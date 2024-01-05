@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = JSON.parse(event.data); // Convertir la chaîne JSON en objet JavaScript
             if ('log' in data) {
                 // updateLogs(data.log);
-                updateTitle(data.log);
+                updateLogs(data.log);
             }
             if ('title' in data) {
                 updateTitle(data.title);
