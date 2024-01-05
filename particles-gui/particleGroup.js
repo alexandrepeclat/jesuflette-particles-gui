@@ -49,7 +49,7 @@ class ParticleGroup {
         };
 
         //Set common state for everything
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 4;
 
         // Draw each color group
         for (const particlesWithSameColor of particlesByColor.values()) {

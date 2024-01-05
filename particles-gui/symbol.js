@@ -115,7 +115,7 @@ class Symbol extends ParticleGroup {
                 }, delay + 300);
                 setOptionsDelayed(this.sortedParticles[i], (particle) => {
                     particle.visible = false;
-                }, delay + 600);
+                }, delay + 1000);
             }
             //Make the book picture appear with some fancy effect
             this.eltImage.style.display = "block";
