@@ -5,7 +5,7 @@ Projet GUI pour anniversaire Nicolas 2024
 
 ### GUI client
 GUI disponible ici (en paramètre le websocket du serveur de jeu)
-https://alexandrepeclat.github.io/particles/particles-gui/?serverUrl=xxx
+https://alexandrepeclat.github.io/jesuflette-particles-gui/particles-gui/?serverUrl=ws://localhost:3000
 
 Commandes (peuvent être utilisées sans serveur de pilotage) :
 ```
